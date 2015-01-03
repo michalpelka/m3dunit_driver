@@ -1,0 +1,11 @@
+<launch>
+
+  
+
+  <include file="$(find m3dold_unit_driver)/launch/PointCloud.launch"/>
+
+  <node pkg="m3dold_unit_driver" type="joyToBool.py" name="joyTrig" output="screen">
+	<param name="buttonNo" value="2"/>
+	<remap to="/aggregator/rqst" from="/joyTrig/button"/>
+</node>
+</launch>

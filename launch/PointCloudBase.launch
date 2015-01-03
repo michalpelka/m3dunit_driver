@@ -1,0 +1,28 @@
+<launch>
+
+
+
+	<node name="rotation_laser" pkg="sick_minimal_driver" type="lms_poller" output="screen">
+		<param name="ip" value="192.168.0.201"/>
+		<param name="frame_id" value="lms100_link"/>
+		<param name="inv" value="false"/>
+	</node>
+	
+	<node name="front_laser" pkg="sick_minimal_driver" type="lms_poller" output="screen">
+		<param name="ip" value="192.168.0.202"/>
+		<param name="frame_id" value="m3d_link"/>
+		<param name="inv" value="true"/>
+
+	</node>
+	
+	<node name="rotation" pkg="m3d_driver" type="m3d_driver_node">
+	</node>
+	<node name="aggregator" pkg="m3d_driver" type="m3d_pc_aggregator" output="screen">
+		<remap to="/rotation_laser/laserScan" from="/aggregator/rotLaserScan"/>
+	</node>
+
+
+	<node pkg="tf" type="static_transform_publisher" name="lms100_link" args="0.0695 0 0.072 0 0 0 1 m3d_rot_laser_link lms100_link 100"/>
+	<node pkg="tf" type="static_transform_publisher" name="tim500_link" args="0 0.0035  0.0 0 0 0 1 m3d_front_laser_link tim500_link 100"/>
+
+</launch>
