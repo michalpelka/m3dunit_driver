@@ -2,22 +2,22 @@
 
 
 
-	<node name="rotation_laser" pkg="sick_minimal_driver" type="lms_poller" output="screen">
+	<node name="rotation_laser" pkg="sick_minimal_driver" type="sick_minimal_driver" output="screen">
 		<param name="ip" value="192.168.0.201"/>
 		<param name="frame_id" value="lms100_link"/>
 		<param name="inv" value="false"/>
 	</node>
 	
-	<node name="front_laser" pkg="sick_minimal_driver" type="lms_poller" output="screen">
+	<node name="front_laser" pkg="sick_minimal_driver" type="sick_minimal_driver" output="screen">
 		<param name="ip" value="192.168.0.202"/>
 		<param name="frame_id" value="m3d_link"/>
 		<param name="inv" value="true"/>
 
 	</node>
 	
-	<node name="rotation" pkg="m3d_driver" type="m3d_driver_node">
+	<node name="rotation" pkg="m3dunit_driver" type="m3d_driver_node">
 	</node>
-	<node name="aggregator" pkg="m3d_driver" type="m3d_pc_aggregator" output="screen">
+	<node name="aggregator" pkg="m3dunit_driver" type="m3d_pc_aggregator" output="screen">
 		<remap to="/rotation_laser/laserScan" from="/aggregator/rotLaserScan"/>
 	</node>
 
