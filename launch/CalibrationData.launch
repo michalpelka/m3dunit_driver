@@ -19,13 +19,14 @@
 	</node>
 	<node name="aggregator" pkg="m3dunit_driver" type="m3d_pc_aggregator" output="screen">
 		<remap to="/rotation_laser/laserScan" from="/aggregator/rotLaserScan"/>
+		<param name="make_calib_file" value="/home/michal/calib.cal"/>
 	</node>
 
 
 	<node pkg="tf" type="static_transform_publisher" name="lms100_link" args="0.0695 0 0.072 0 0 0 1 m3d_rot_laser_link lms100_link 100"/>
 	<node pkg="tf" type="static_transform_publisher" name="tim500_link" args="0 0.0035  0.0 0 0 0 1 m3d_front_laser_link tim500_link 100"/>
 
-	<node name="output_topic1" pkg="rostopic" type="rostopic" output="screen" args="pub /rotation/velocity std_msgs/Float32 25"/>
+	<node name="output_topic1" pkg="rostopic" type="rostopic" output="screen" args="pub /rotation/velocity std_msgs/Float32 10"/>
 	<node name="output_topic2" pkg="rostopic" type="rostopic" output="screen" args="pub -r 10 /aggregator/rqst std_msgs/Bool 1"/>
 
 

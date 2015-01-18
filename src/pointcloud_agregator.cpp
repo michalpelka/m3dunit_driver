@@ -15,6 +15,7 @@
 #include <geometry_msgs/Point.h>
 #include <angles/angles.h>
 #include <std_msgs/Float32.h>
+#include <fstream>
 sensor_msgs::PointCloud2 cloud;
 
 tf::TransformListener* tflistener;
@@ -24,7 +25,8 @@ float distance;
 tf::Quaternion actual;
 tf::Quaternion begin;
 tf::Quaternion old;
-
+std::ofstream calibFile;
+std::string calibFileName ="";
 int profileCount =0;
  std::string rootTransform;
 void scanCallback(const sensor_msgs::LaserScanPtr& scan )
@@ -56,6 +58,12 @@ void scanCallback(const sensor_msgs::LaserScanPtr& scan )
         tf::Vector3 pointIn (cos(ang)*dist,
                              sin(ang)*dist,
                              0);
+
+        if (calibFileName.size()>0)
+        {
+            calibFile<<pointIn[0]<<"\t"<<pointIn[1]<<"\t"<<dd<<"\n";
+        }
+
         pointOut = transform*pointIn;
 
         {
@@ -79,6 +87,7 @@ void scanCallback(const sensor_msgs::LaserScanPtr& scan )
         }
 
     }
+
     old = actual;
     profileCount ++;
 }
@@ -114,6 +123,18 @@ int main(int argc, char** argv){
   n.getParam("root_frame", rootTransform);
 
 
+  n.getParam("make_calib_file", calibFileName);
+
+  if (calibFileName !="")
+  {
+      ROS_INFO("WILL SAVE CALIBRATION FILE.");
+      calibFile.open(calibFileName.c_str());
+      if (!calibFile.is_open())
+      {
+            ROS_FATAL("CANNOT OPEN CALIB FILE.");
+      }
+  }
+
   int count = 0;
 
   creatingPointCloud=false;
@@ -124,7 +145,6 @@ int main(int argc, char** argv){
 	  
     cloud.header.stamp = ros::Time::now();
     cloud.header.frame_id = "m3d_link";
-
     // set fields names
     cloud.fields.resize(4);
     cloud.fields[0].name="x";
@@ -176,6 +196,14 @@ int main(int argc, char** argv){
         progress_pub.publish(progress);
         distance = 0;
         profileCount =0;
+
+        if (calibFileName.size()>0)
+        {
+            calibFile<<"###"<<"\n";
+        }
+
+
+
     }
     if (creatingPointCloud  && progress.data < 100.0)
     {
